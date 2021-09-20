@@ -123,6 +123,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
         String url = request.getMethod() + " " + requestURI;
         log.debug("Start handle request of {}", url);
         User modifier = new User();
+        Response response = null;
         try {
             Wrapper<ResponseFormat> responseWrapper = validateRequestHeaders(instanceIdHeader, userId);
             if (responseWrapper.isEmpty()) {
@@ -139,17 +140,22 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
                 String distributionId = distResponse.left().value();
                 Object result = RepresentationUtils.toRepresentation(new ServiceDistributionRespInfo(distributionId));
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.ACCEPTED);
-                return buildOkResponse(responseFormat, result);
+                response = buildOkResponse(responseFormat, result);
+                return response;
             } else {
                 log.debug("request instanceId/userId header validation failed");
                 responseFormat = responseWrapper.getInnerElement();
-                return buildErrorResponse(responseFormat);
+                response = buildErrorResponse(responseFormat);
+                return response;
             }
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Activate Distribution");
             log.debug("activate distribution failed with exception", e);
             throw e;
         } finally {
+            if (response != null) {
+                response.close();
+            }
             getComponentsUtils()
                 .auditExternalActivateService(responseFormat, new DistributionData(instanceIdHeader, requestURI), requestId, serviceUUID, modifier);
         }
