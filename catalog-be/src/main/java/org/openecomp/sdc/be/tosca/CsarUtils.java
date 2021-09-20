@@ -999,9 +999,9 @@ public class CsarUtils {
         //<Inner Asset TOSCA name (e.g. VFC name)> folder name: <Inner Asset TOSCA name (e.g. VFC name)>_v<version>.
 
         //E.g. "org.openecomp.resource.vf.vipr_atm_v1.0"
-        Set<String> componentTypeArtifactsKeys = componentTypeArtifacts.keySet();
-        for (String keyAssetName : componentTypeArtifactsKeys) {
-            ComponentTypeArtifacts componentInstanceArtifacts = componentTypeArtifacts.get(keyAssetName);
+        for (Map.Entry<String, ComponentTypeArtifacts> entry : componentTypeArtifacts.entrySet()) {
+            String keyAssetName = entry.getKey();
+            ComponentTypeArtifacts componentInstanceArtifacts = entry.getValue();
             ArtifactsInfo componentArtifacts2 = componentInstanceArtifacts.getComponentArtifacts();
             String pathWithAssetName = currentPath + keyAssetName + PATH_DELIMITER;
             Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedPath = writeArtifactsInfoToSpecifiedPath(mainComponent,
