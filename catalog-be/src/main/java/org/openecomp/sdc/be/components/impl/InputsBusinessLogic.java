@@ -730,24 +730,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             return Either.right(defaultValuesValidation.right().value());
         }
         // convert property
-        ToscaPropertyType type = getType(newInputDefinition.getType());
-        if (type != null) {
-            PropertyValueConverter converter = type.getConverter();
-            // get inner type
-            SchemaDefinition schema = newInputDefinition.getSchema();
-            String innerType = null;
-            if (schema != null) {
-                PropertyDataDefinition prop = schema.getProperty();
-                if (prop != null) {
-                    innerType = prop.getType();
-                }
-            }
-            String convertedValue;
-            if (newInputDefinition.getDefaultValue() != null) {
-                convertedValue = converter.convert(newInputDefinition.getDefaultValue(), innerType, dataTypes);
-                newInputDefinition.setDefaultValue(convertedValue);
-            }
-        }
+        convertDefaultValue(newInputDefinition, getType(newInputDefinition.getType()), dataTypes);
         return Either.left(newInputDefinition);
     }
 
@@ -836,23 +819,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 return result;
             }
             // convert Input
-            ToscaPropertyType type = getType(newInputDefinition.getType());
-            if (type != null) {
-                PropertyValueConverter converter = type.getConverter();
-                // get inner type
-                String innerType = null;
-                SchemaDefinition schema = newInputDefinition.getSchema();
-                if (schema != null) {
-                    PropertyDataDefinition prop = schema.getProperty();
-                    if (prop != null) {
-                        innerType = prop.getType();
-                    }
-                }
-                if (newInputDefinition.getDefaultValue() != null) {
-                    String convertedValue = converter.convert(newInputDefinition.getDefaultValue(), innerType, allDataTypes);
-                    newInputDefinition.setDefaultValue(convertedValue);
-                }
-            }
+            convertDefaultValue(newInputDefinition, getType(newInputDefinition.getType()), allDataTypes);
             newInputDefinition.setMappedToComponentProperty(false);
             Either<InputDefinition, StorageOperationStatus> addInputEither = toscaOperationFacade
                 .addInputToComponent(inputName, newInputDefinition, component);
@@ -872,5 +839,24 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
     private boolean isInputExistInComponent(List<InputDefinition> inputs, String inputName) {
         return CollectionUtils.isNotEmpty(inputs) && inputs.stream().anyMatch(input -> input.getName().equals(inputName));
+    }
+    
+    private void convertDefaultValue(InputDefinition newInputDefinition, ToscaPropertyType type, Map<String, DataTypeDefinition> dataTypes) {
+        if (type != null) {
+            PropertyValueConverter converter = type.getConverter();
+            // get inner type
+            String innerType = null;
+            SchemaDefinition schema = newInputDefinition.getSchema();
+            if (schema != null) {
+                PropertyDataDefinition prop = schema.getProperty();
+                if (prop != null) {
+                    innerType = prop.getType();
+                }
+            }
+            if (newInputDefinition.getDefaultValue() != null) {
+                String convertedValue = converter.convert(newInputDefinition.getDefaultValue(), innerType, dataTypes);
+                newInputDefinition.setDefaultValue(convertedValue);
+            }
+        }
     }
 }
