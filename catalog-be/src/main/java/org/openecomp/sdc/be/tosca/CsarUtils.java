@@ -999,9 +999,9 @@ public class CsarUtils {
         //<Inner Asset TOSCA name (e.g. VFC name)> folder name: <Inner Asset TOSCA name (e.g. VFC name)>_v<version>.
 
         //E.g. "org.openecomp.resource.vf.vipr_atm_v1.0"
-        Set<String> componentTypeArtifactsKeys = componentTypeArtifacts.keySet();
-        for (String keyAssetName : componentTypeArtifactsKeys) {
-            ComponentTypeArtifacts componentInstanceArtifacts = componentTypeArtifacts.get(keyAssetName);
+        for (Map.Entry<String, ComponentTypeArtifacts> entry : componentTypeArtifacts.entrySet()) {
+            String keyAssetName = entry.getKey();
+            ComponentTypeArtifacts componentInstanceArtifacts = entry.getValue();
             ArtifactsInfo componentArtifacts2 = componentInstanceArtifacts.getComponentArtifacts();
             String pathWithAssetName = currentPath + keyAssetName + PATH_DELIMITER;
             Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedPath = writeArtifactsInfoToSpecifiedPath(mainComponent,
@@ -1021,8 +1021,9 @@ public class CsarUtils {
         for (final ArtifactGroupTypeEnum artifactGroupTypeEnum : artifactsInfo.keySet()) {
             final String groupTypeFolder = path + WordUtils.capitalizeFully(artifactGroupTypeEnum.getType()) + PATH_DELIMITER;
             final Map<String, List<ArtifactDefinition>> artifactTypesMap = artifactsInfo.get(artifactGroupTypeEnum);
-            for (final String artifactType : artifactTypesMap.keySet()) {
-                final List<ArtifactDefinition> artifactDefinitionList = artifactTypesMap.get(artifactType);
+            for (final Map.Entry<String, List<ArtifactDefinition> entry : artifactTypesMap.entrySet()) {
+                final String artifactType = entry.getKey();
+                final List<ArtifactDefinition> artifactDefinitionList = entry.getValue();
                 String artifactTypeFolder = groupTypeFolder + artifactType + PATH_DELIMITER;
                 if (ArtifactTypeEnum.WORKFLOW.getType().equals(artifactType) && path.contains(ARTIFACTS_PATH + RESOURCES_PATH)) {
                     // Ignore this packaging as BPMN artifacts needs to be packaged in different manner
