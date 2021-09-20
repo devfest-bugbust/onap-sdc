@@ -1379,7 +1379,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         if (resourceTypeStr != null) {
             ResourceTypeEnum resourceType = ResourceTypeEnum.getType((String) resourceTypeStr);
             if (!CollectionUtils.isEmpty(excludeTypes)) {
-                isAddToCatalog = not (excludeTypes.stream().anyMatch(rt -> rt == resourceType);
+                isAddToCatalog = not (excludeTypes.stream().anyMatch(rt -> rt == resourceType));
             }
         }
         return isAddToCatalog;
