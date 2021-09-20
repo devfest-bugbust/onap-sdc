@@ -882,10 +882,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (lock) {
             try {
                 lockComponent(service.getUniqueId(), service, "Delete Forwarding Path on Service");
-            } catch (ComponentException e) {
+            } finally {
                 janusGraphDao.rollback();
-                throw new ByActionStatusComponentException(
-                    componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), "");
             }
         }
         try {
