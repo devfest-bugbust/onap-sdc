@@ -598,10 +598,10 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
             InterfaceDefinition interfaceDefResult = convertInterfaceDataToInterfaceDefinition(interfaceData);
             Map<String, Operation> operations = interf.getOperationsMap();
             if (operations != null && !operations.isEmpty()) {
-                Set<String> opNames = operations.keySet();
                 Map<String, Operation> newOperations = new HashMap<>();
-                for (String operationName : opNames) {
-                    Operation op = operations.get(operationName);
+                for (Map.Entry<String, Operation> entry : operations.entrySet()) {
+                    String operationName = entry.getKey(); 
+                    Operation op = entry.getValue();
                     Either<OperationData, JanusGraphOperationStatus> opStatus = addOperationToGraph(interf, operationName, op, interfaceData);
                     if (status.isRight()) {
                         janusGraphGenericDao.rollback();
