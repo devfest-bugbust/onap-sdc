@@ -437,12 +437,10 @@ public class CambriaHandler implements ICambriaHandler {
     public CambriaErrorResponse sendNotificationAndClose(String topicName, String uebPublicKey, String uebSecretKey, List<String> uebServers,
                                                          INotificationData data, long waitBeforeCloseTimeout) {
         String methodName = "sendNotificationAndClose";
-        CambriaBatchingPublisher createSimplePublisher;
         CambriaErrorResponse response;
-        try {
+        try (CambriaBatchingPublisher createSimplePublisher = new PublisherBuilder().onTopic(topicName).usingHosts(uebServers).build())  {
             String json = gson.toJson(data);
             log.debug("Before sending notification data {} to topic {}", json, topicName);
-            createSimplePublisher = new PublisherBuilder().onTopic(topicName).usingHosts(uebServers).build();
             createSimplePublisher.setApiCredentials(uebPublicKey, uebSecretKey);
             int result = createSimplePublisher.send(PARTITION_KEY, json);
             try {
