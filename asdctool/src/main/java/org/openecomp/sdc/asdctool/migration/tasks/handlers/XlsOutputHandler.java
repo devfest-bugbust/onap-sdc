@@ -100,7 +100,7 @@ public class XlsOutputHandler implements OutputHandler {
         if (StringUtils.isNotEmpty(outputPath)) {
             fileName.append(outputPath);
         }
-        return fileName.append(sheetName).append("_").append(new SimpleDateFormat("yyyyMMdd_HHmmss").format(System.currentTimeMillis()))
+        return fileName.append(sheetName).append("_").append(new SimpleDateFormat("yyyyMMdd_HHmmssZ").format(System.currentTimeMillis()))
             .append(".xls").toString();
     }
 }
