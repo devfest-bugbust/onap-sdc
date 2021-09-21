@@ -47,19 +47,20 @@ public class ValidationTool {
         CSVFile csvFile = ReportFile.makeCsvFile(makeNioWriter(Paths.get(csvReportFilePath)));
         TXTFile textFile = ReportFile.makeTxtFile(makeNioWriter(Paths.get(txtReportFilePath)));
         String appConfigDir = args[1];
-        AnnotationConfigApplicationContext context = initContext(appConfigDir);
-        ValidationToolBL validationToolBL = context.getBean(ValidationToolBL.class);
-        log.info("Start Validation Tool");
-        Report report = Report.make();
-        boolean result = validationToolBL.validateAll(report, textFile);
-        textFile.reportEndOfToolRun(report);
-        csvFile.printAllResults(report);
-        if (result) {
-            log.info("Validation finished successfully");
-            System.exit(0);
-        } else {
-            log.info("Validation finished with warnings");
-            System.exit(2);
+        try (AnnotationConfigApplicationContext context = initContext(appConfigDir)) {
+            ValidationToolBL validationToolBL = context.getBean(ValidationToolBL.class);
+            log.info("Start Validation Tool");
+            Report report = Report.make();
+            boolean result = validationToolBL.validateAll(report, textFile);
+            textFile.reportEndOfToolRun(report);
+            csvFile.printAllResults(report);
+            if (result) {
+                log.info("Validation finished successfully");
+                System.exit(0);
+            } else {
+                log.info("Validation finished with warnings");
+                System.exit(2);
+            }
         }
     }
 
