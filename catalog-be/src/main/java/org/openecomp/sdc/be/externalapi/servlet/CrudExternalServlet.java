@@ -237,9 +237,16 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                     }
                     // Create the service in the dataModel
                     service = actionResponse.left().value();
-                    Object result = RepresentationUtils.toRepresentation(actionResponse.left().value());
-                    responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.CREATED));
-                    return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), result);
+                    Object result = null;
+                    try {
+                        result = RepresentationUtils.toRepresentation(actionResponse.left().value());
+                        responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.CREATED));
+                        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), result);
+                    } finally {
+                        if (result != null) {
+                            result.close();
+                        }
+                    }
                 } else {
                     return buildErrorResponse(responseWrapper.getInnerElement());
                 }
