@@ -298,9 +298,9 @@ public class ActionsImpl implements Actions {
     @Override
     public Response getFilteredActions(String vendor, String category, String name, String modelID, String componentID,
                                        HttpServletRequest servletRequest) {
+        Response response = null;
         try {
             LOGGER.debug(" entering getFilteredActions ");
-            Response response;
             initializeRequestMDC(servletRequest, "", ActionRequest.GET_FILTERED_ACTIONS);
             int noOfFilterParams = getNoOfFilterParams(vendor, category, name, modelID, componentID);
             if (StringUtils.isEmpty(servletRequest.getQueryString())) {
@@ -336,6 +336,10 @@ public class ActionsImpl implements Actions {
             actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
             LOGGER.error("");
             throw exception;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
     }
 
