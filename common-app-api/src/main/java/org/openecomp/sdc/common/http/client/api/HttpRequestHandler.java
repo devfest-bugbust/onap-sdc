@@ -79,13 +79,27 @@ public class HttpRequestHandler {
     }
 
     public HttpResponse<byte[]> getAsByteArray(String url, Properties headers, HttpClientConfig config) throws HttpExecuteException {
-        HttpClient client = getOrCreateClient(url, config);
-        return client.<byte[]>get(url, headers, byteResponseBuilder);
+        HttpClient client = null;
+        try {
+             client = getOrCreateClient(url, config);
+            return client.<byte[]>get(url, headers, byteResponseBuilder);
+        } finally {
+            if (client != null) {
+                client.close();
+            }
+        }
     }
 
     public HttpResponse<String> put(String url, Properties headers, HttpEntity entity, HttpClientConfig config) throws HttpExecuteException {
-        HttpClient client = getOrCreateClient(url, config);
-        return client.<String>put(url, headers, entity, stringResponseBuilder);
+        HttpClient client = null;
+        try {
+            client = getOrCreateClient(url, config);
+            return client.<String>put(url, headers, entity, stringResponseBuilder);
+        } finally {
+            if (client != null) {
+                client.close();
+            }
+        }
     }
 
     public HttpResponse<String> post(String url, Properties headers, HttpEntity entity, HttpClientConfig config) throws HttpExecuteException {
