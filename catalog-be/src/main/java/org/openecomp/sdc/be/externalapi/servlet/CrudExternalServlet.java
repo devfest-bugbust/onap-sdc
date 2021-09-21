@@ -183,6 +183,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         User modifier = null;
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(ComponentTypeEnum.RESOURCE.getValue());
         Service service = null;
+        Response response = null;
         try {
             // Validate X-ECOMP-InstanceID Header
             if (responseWrapper.isEmpty()) {
@@ -279,9 +280,11 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 // Create the resource in the dataModel
                 if (responseWrapper.isEmpty()) {
                     resource = resourceBusinessLogic.createResource(resource, null, modifier, null, null);
-                    return buildCreatedResourceResponse(resource, responseWrapper);
+                    response = buildCreatedResourceResponse(resource, responseWrapper);
+                    return response;
                 } else {
-                    return buildErrorResponse(responseWrapper.getInnerElement());
+                    response = buildErrorResponse(responseWrapper.getInnerElement());
+                    return response;
                 }
             }
         } catch (IOException | ParseException e) {
@@ -295,6 +298,9 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             responseWrapper.setInnerElement(responseFormat);
             return buildErrorResponse(responseFormat);
         } finally {
+            if (response != null) {
+                response.close();
+            }
             if (AssetTypeEnum.RESOURCES.getValue().equals(assetType)) {
                 getComponentsUtils().auditCreateResourceExternalApi(responseWrapper.getInnerElement(), resourceCommonInfo, request, resource);
             } else if (AssetTypeEnum.SERVICES.getValue().equals(assetType)) {
