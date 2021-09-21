@@ -31,16 +31,17 @@ public class ArtifactValidatorTool {
         String outputPath = args[0];
         String txtReportFilePath = ValidationConfigManager.txtReportFilePath(outputPath);
         String appConfigDir = args[1];
-        AnnotationConfigApplicationContext context = initContext(appConfigDir);
-        ArtifactToolBL validationToolBL = context.getBean(ArtifactToolBL.class);
-        System.out.println("Start ArtifactValidation Tool");
-        Boolean result = validationToolBL.validateAll(txtReportFilePath);
-        if (result) {
-            System.out.println("ArtifactValidation finished successfully");
-            System.exit(0);
-        } else {
-            System.out.println("ArtifactValidation finished with warnings");
-            System.exit(2);
+        try (AnnotationConfigApplicationContext context = initContext(appConfigDir)) {
+            ArtifactToolBL validationToolBL = context.getBean(ArtifactToolBL.class);
+            System.out.println("Start ArtifactValidation Tool");
+            Boolean result = validationToolBL.validateAll(txtReportFilePath);
+            if (result) {
+                System.out.println("ArtifactValidation finished successfully");
+                System.exit(0);
+            } else {
+                System.out.println("ArtifactValidation finished with warnings");
+                System.exit(2);
+            }
         }
     }
 
