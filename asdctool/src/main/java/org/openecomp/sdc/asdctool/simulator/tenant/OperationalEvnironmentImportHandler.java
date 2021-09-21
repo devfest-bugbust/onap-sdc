@@ -86,8 +86,16 @@ public class OperationalEvnironmentImportHandler {
     }
 
     private static OperationalEnvironmentDao createDaoObj() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ImportTableConfig.class);
-        return (OperationalEnvironmentDao) context.getBean("operational-environment-dao");
+        AnnotationConfigApplicationContext context = null;
+        try {
+            context = new AnnotationConfigApplicationContext(ImportTableConfig.class);
+            return (OperationalEnvironmentDao) context.getBean("operational-environment-dao");
+        } finally {
+            if (context != null) {
+                context.close();
+            }
+        }
+        
     }
 
     private static void modifyDb(List<OperationalEnvironmentEntry> environments) {
