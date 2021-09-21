@@ -1631,9 +1631,9 @@ public class ToscaOperationFacade {
                                                                         ComponentInstanceProperty property) {
         StorageOperationStatus status;
         // check if the property already exists or not
-        Optional<ComponentInstanceProperty> instanceProperty = originalComponentInstProps.stream()
-            .filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
-        if (instanceProperty.isPresent()) {
+        boolean isPropertyPresent = originalComponentInstProps.stream()
+            .anyMatch(p -> p.getUniqueId().equals(property.getUniqueId()));
+        if (isPropertyPresent) {
             status = updateComponentInstanceProperty(containerComponent, componentInstanceId, property);
         } else {
             status = addComponentInstanceProperty(containerComponent, componentInstanceId, property);
