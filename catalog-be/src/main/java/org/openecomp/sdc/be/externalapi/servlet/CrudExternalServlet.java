@@ -281,12 +281,11 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 if (responseWrapper.isEmpty()) {
                     resource = resourceBusinessLogic.createResource(resource, null, modifier, null, null);
                     response = buildCreatedResourceResponse(resource, responseWrapper);
-                    return response;
                 } else {
                     response = buildErrorResponse(responseWrapper.getInnerElement());
-                    return response;
                 }
             }
+            return response;
         } catch (IOException | ParseException e) {
             final String message = "failed to create vfc monitoring template resource";
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
