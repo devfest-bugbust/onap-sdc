@@ -54,8 +54,15 @@ public class VrfObjectFixMenu {
     }
 
     private static VrfObjectFixHandler getVrfObjectFixHandler() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(VrfObjectFixConfiguration.class);
-        return context.getBean(VrfObjectFixHandler.class);
+        AnnotationConfigApplicationContext context = null;
+        try {
+            context = new AnnotationConfigApplicationContext(VrfObjectFixConfiguration.class);
+            return context.getBean(VrfObjectFixHandler.class);
+        } finally {
+            if (context != null) {
+                context.close();
+            }
+        }
     }
 
     private static boolean isNotValidArguments(String[] args) {
