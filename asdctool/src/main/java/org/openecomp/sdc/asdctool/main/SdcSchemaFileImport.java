@@ -118,19 +118,20 @@ public class SdcSchemaFileImport {
             System.exit(1);
         }
         //Generation flow end - generating SDC from narratives
-        AnnotationConfigApplicationContext context = initContext(appConfigDir);
-        SdcSchemaFilesCassandraDao schemaFilesCassandraDao = (SdcSchemaFilesCassandraDao) context.getBean("sdc-schema-files-cassandra-dao");
-        byte[] fileBytes = baos.toByteArray();
-        Date date = new Date();
-        String md5Hex = DigestUtils.md5Hex(fileBytes);
-        SdcSchemaFilesData schemeFileData = new SdcSchemaFilesData(sdcReleaseNum, date, conformanceLevel, FILE_NAME, fileBytes, md5Hex);
-        CassandraOperationStatus saveSchemaFile = schemaFilesCassandraDao.saveSchemaFile(schemeFileData);
-        if (!saveSchemaFile.equals(CassandraOperationStatus.OK)) {
-            System.err.println("SdcSchemaFileImport failed cassandra error" + saveSchemaFile);
-            System.exit(1);
+        try (AnnotationConfigApplicationContext context = initContext(appConfigDir)) {
+            SdcSchemaFilesCassandraDao schemaFilesCassandraDao = (SdcSchemaFilesCassandraDao) context.getBean("sdc-schema-files-cassandra-dao");
+            byte[] fileBytes = baos.toByteArray();
+            Date date = new Date();
+            String md5Hex = DigestUtils.md5Hex(fileBytes);
+            SdcSchemaFilesData schemeFileData = new SdcSchemaFilesData(sdcReleaseNum, date, conformanceLevel, FILE_NAME, fileBytes, md5Hex);
+            CassandraOperationStatus saveSchemaFile = schemaFilesCassandraDao.saveSchemaFile(schemeFileData);
+            if (!saveSchemaFile.equals(CassandraOperationStatus.OK)) {
+                System.err.println("SdcSchemaFileImport failed cassandra error" + saveSchemaFile);
+                System.exit(1);
+            }
+            System.out.println("SdcSchemaFileImport successfully completed");
+            System.exit(0);
         }
-        System.out.println("SdcSchemaFileImport successfully completed");
-        System.exit(0);
     }
 
     public static void createAndSaveSchemaFileYaml(SchemaZipFileEnum schemaZipFileEnum, Object content) {
