@@ -36,25 +36,26 @@ public class CsarGeneratorTool extends SdcInternalTool {
         String appConfigDir = args[0];
         disableConsole();
         ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(CsarGeneratorConfiguration.class);
-        CsarGenerator csarGenerator = context.getBean(CsarGenerator.class);
-        ConsoleWriter.dataLine("STARTED... ");
-        String input = "";
-        Scanner scanner = new Scanner(System.in);
-        do {
-            ConsoleWriter.dataLine("Enter next service UUID  or exit: ");
-            input = scanner.nextLine();
-            if (!input.equals("exit")) {
-                if (!input.isEmpty()) {
-                    ConsoleWriter.dataLine("Your UUID is ", input);
-                    csarGenerator.generateCsar(input, scanner);
-                } else {
-                    ConsoleWriter.dataLine("Your UUID is empty. Try again.");
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(CsarGeneratorConfiguration.class)) {
+            CsarGenerator csarGenerator = context.getBean(CsarGenerator.class);
+            ConsoleWriter.dataLine("STARTED... ");
+            String input = "";
+            Scanner scanner = new Scanner(System.in);
+            do {
+                ConsoleWriter.dataLine("Enter next service UUID  or exit: ");
+                input = scanner.nextLine();
+                if (!input.equals("exit")) {
+                    if (!input.isEmpty()) {
+                        ConsoleWriter.dataLine("Your UUID is ", input);
+                        csarGenerator.generateCsar(input, scanner);
+                    } else {
+                        ConsoleWriter.dataLine("Your UUID is empty. Try again.");
+                    }
                 }
-            }
-        } while (!input.equals("exit"));
-        csarGenerator.closeAll();
-        ConsoleWriter.dataLine("CsarGeneratorTool exit...");
-        System.exit(0);
+            } while (!input.equals("exit"));
+            csarGenerator.closeAll();
+            ConsoleWriter.dataLine("CsarGeneratorTool exit...");
+            System.exit(0);
+        }
     }
 }
