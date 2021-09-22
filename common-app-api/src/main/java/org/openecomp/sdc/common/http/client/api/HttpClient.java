@@ -49,7 +49,7 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.FunctionThrows;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-public class HttpClient {
+public class HttpClient implements AutoCloseable {
 
     private static final Logger logger = Logger.getLogger(HttpClient.class.getName());
     private final CloseableHttpClient client;
@@ -93,7 +93,7 @@ public class HttpClient {
         return execute(httpDelete, headers, responseBuilder);
     }
 
-    void close() {
+    public void close() {
         try {
             client.close();
         } catch (IOException e) {

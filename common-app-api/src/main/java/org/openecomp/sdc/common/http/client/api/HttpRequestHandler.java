@@ -74,47 +74,39 @@ public class HttpRequestHandler {
     }
 
     public HttpResponse<String> get(String url, Properties headers, HttpClientConfig config) throws HttpExecuteException {
-        HttpClient client = getOrCreateClient(url, config);
-        return client.<String>get(url, headers, stringResponseBuilder);
+        try (HttpClient client = getOrCreateClient(url, config)) {
+            return client.<String>get(url, headers, stringResponseBuilder);
+        }
     }
 
     public HttpResponse<byte[]> getAsByteArray(String url, Properties headers, HttpClientConfig config) throws HttpExecuteException {
-        HttpClient client = null;
-        try {
-             client = getOrCreateClient(url, config);
+        try (HttpClient client = getOrCreateClient(url, config)) {
             return client.<byte[]>get(url, headers, byteResponseBuilder);
-        } finally {
-            if (client != null) {
-                client.close();
-            }
         }
     }
 
     public HttpResponse<String> put(String url, Properties headers, HttpEntity entity, HttpClientConfig config) throws HttpExecuteException {
-        HttpClient client = null;
-        try {
-            client = getOrCreateClient(url, config);
+        try (HttpClient client = getOrCreateClient(url, config)) {
             return client.<String>put(url, headers, entity, stringResponseBuilder);
-        } finally {
-            if (client != null) {
-                client.close();
-            }
         }
     }
 
     public HttpResponse<String> post(String url, Properties headers, HttpEntity entity, HttpClientConfig config) throws HttpExecuteException {
-        HttpClient client = getOrCreateClient(url, config);
-        return client.<String>post(url, headers, entity, stringResponseBuilder);
+        try (HttpClient client = getOrCreateClient(url, config)) {
+            return client.<String>post(url, headers, entity, stringResponseBuilder);
+        }
     }
 
     public HttpResponse<String> patch(String url, Properties headers, HttpEntity entity, HttpClientConfig config) throws HttpExecuteException {
-        HttpClient client = getOrCreateClient(url, config);
-        return client.<String>patch(url, headers, entity, stringResponseBuilder);
+        try (HttpClient client = getOrCreateClient(url, config)) {
+            return client.<String>patch(url, headers, entity, stringResponseBuilder);
+        }
     }
 
     public HttpResponse<String> delete(String url, Properties headers, HttpClientConfig config) throws HttpExecuteException {
-        HttpClient client = getOrCreateClient(url, config != null ? config : HttpRequest.defaultConfig);
-        return client.<String>delete(url, headers, stringResponseBuilder);
+        try (HttpClient client = getOrCreateClient(url, config != null ? config : HttpRequest.defaultConfig)) {
+            return client.<String>delete(url, headers, stringResponseBuilder);
+        }
     }
 
     public void destroy() {
