@@ -102,7 +102,9 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         for (Map.Entry<String, ServiceTemplate> serviceTemplate : serviceTemplates.entrySet()) {
             String fileName = serviceTemplate.getKey();
             zos.putNextEntry(new ZipEntry(DEFINITIONS_FOLDER_NAME + FILE_SEPARATOR + fileName));
-            writeBytesToZip(zos, FileUtils.convertToInputStream(serviceTemplate.getValue(), FileUtils.FileExtension.YAML));
+            try (InputStream is = FileUtils.convertToInputStream(serviceTemplate.getValue(), FileUtils.FileExtension.YAML)) {
+                writeBytesToZip(zos, is);
+            }
         }
     }
 
