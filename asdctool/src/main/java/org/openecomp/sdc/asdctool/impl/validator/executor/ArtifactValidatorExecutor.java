@@ -104,14 +104,13 @@ public abstract class ArtifactValidatorExecutor {
                 Set<String> artifactEsId = new HashSet<>();
                 for (Component component : compList) {
                     Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
-                    Optional<ArtifactDefinition> op = toscaArtifacts.values().stream().filter(a -> artifactEsId.contains(a.getEsId())).findAny();
-                    if (op.isPresent()) {
-                        result = false;
+                    result = not ( toscaArtifacts.values().stream().anyMatch(a -> artifactEsId.contains(a.getEsId())) );
+                    if (result) {
+                        artifactEsId.addAll(toscaArtifacts.values().stream().map(ArtifactDefinition::getEsId).collect(Collectors.toList()));
+                    } else {
                         writeModuleResultToFile(writer, compList);
                         writer.flush();
                         break;
-                    } else {
-                        artifactEsId.addAll(toscaArtifacts.values().stream().map(ArtifactDefinition::getEsId).collect(Collectors.toList()));
                     }
                 }
             }
