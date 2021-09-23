@@ -45,7 +45,7 @@ public class GraphLockOperation implements IGraphLockOperation {
      */
     @Override
     public StorageOperationStatus lockComponent(String componentId, NodeTypeEnum nodeType) {
-        return lockComponentDefault(String componentId, NodeTypeEnum nodeType);
+        return lockComponentDefault(componentId, nodeType);
     }
 
     /*
@@ -67,7 +67,7 @@ public class GraphLockOperation implements IGraphLockOperation {
 
     @Override
     public StorageOperationStatus lockComponentByName(String name, NodeTypeEnum nodeType) {
-        return lockComponentDefault(String name, NodeTypeEnum nodeType);
+        return lockComponentDefault(name, nodeType);
     }
 
     @Override
