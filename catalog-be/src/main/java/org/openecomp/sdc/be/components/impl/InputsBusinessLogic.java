@@ -402,15 +402,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             result = Either.right(e.getResponseFormat());
             return result;
         } finally {
-            if (!inTransaction) {
-                if (result == null || result.isRight()) {
-                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
-                    janusGraphDao.rollback();
-                } else {
-                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
-                    janusGraphDao.commit();
-                }
-            }
+            logJanusGraphDao(inTransaction, result);
             // unlock resource
             if (shouldLockComp && component != null) {
                 graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
@@ -484,16 +476,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             result = Either.right(e.getResponseFormat());
             return result;
         } finally {
-
-            if (!inTransaction) {
-                if (result == null || result.isRight()) {
-                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
-                    janusGraphDao.rollback();
-                } else {
-                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
-                    janusGraphDao.commit();
-                }
-            }
+            logJanusGraphDao(inTransaction, result);
             // unlock resource
             if (shouldLockComp && component != null) {
                 graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
@@ -856,6 +839,18 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             if (newInputDefinition.getDefaultValue() != null) {
                 String convertedValue = converter.convert(newInputDefinition.getDefaultValue(), innerType, dataTypes);
                 newInputDefinition.setDefaultValue(convertedValue);
+            }
+        }
+    }
+
+    private void logJanusGraphDao(boolean inTransaction, Either<List<InputDefinition>, ResponseFormat> result) {
+        if (!inTransaction) {
+            if (result == null || result.isRight()) {
+                log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
+                janusGraphDao.rollback();
+            } else {
+                log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
+                janusGraphDao.commit();
             }
         }
     }
