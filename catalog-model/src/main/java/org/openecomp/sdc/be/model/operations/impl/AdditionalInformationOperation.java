@@ -483,15 +483,7 @@ public class AdditionalInformationOperation {
             }
             return result;
         } finally {
-            if (!inTransaction) {
-                if (result == null || result.isRight()) {
-                    log.error(GOING_TO_EXECUTE_ROLLBACK_ON_GRAPH);
-                    janusGraphGenericDao.rollback();
-                } else {
-                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_GRAPH);
-                    janusGraphGenericDao.commit();
-                }
-            }
+            logJanusGraphGenericDao(inTransaction, result);
         }
     }
 
@@ -600,15 +592,7 @@ public class AdditionalInformationOperation {
     }
 
     private void commitOrRollback(boolean inTransaction, Either<? extends Object, StorageOperationStatus> result) {
-        if (!inTransaction) {
-            if (result == null || result.isRight()) {
-                log.error(GOING_TO_EXECUTE_ROLLBACK_ON_GRAPH);
-                janusGraphGenericDao.rollback();
-            } else {
-                log.debug(GOING_TO_EXECUTE_COMMIT_ON_GRAPH);
-                janusGraphGenericDao.commit();
-            }
-        }
+        logJanusGraphGenericDao(inTransaction, result);
     }
 
     public Either<AdditionalInfoParameterInfo, StorageOperationStatus> getAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId,
@@ -691,5 +675,17 @@ public class AdditionalInformationOperation {
             }
         }
         return JanusGraphOperationStatus.OK;
+    }
+
+    private void logJanusGraphGenericDao(boolean inTransaction, Either<? extends Object, StorageOperationStatus> result) {
+        if (!inTransaction) {
+            if (result == null || result.isRight()) {
+                log.error(GOING_TO_EXECUTE_ROLLBACK_ON_GRAPH);
+                janusGraphGenericDao.rollback();
+            } else {
+                log.debug(GOING_TO_EXECUTE_COMMIT_ON_GRAPH);
+                janusGraphGenericDao.commit();
+            }
+        }
     }
 }
