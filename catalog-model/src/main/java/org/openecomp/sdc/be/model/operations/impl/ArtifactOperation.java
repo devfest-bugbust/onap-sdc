@@ -76,6 +76,16 @@ public class ArtifactOperation {
         super();
     }
 
+    private artifactDefResult(Either<ArtifactData, StorageOperationStatus> status, ArtifactDefinition artifactInfo, boolean inTransaction) {
+        if (!inTransaction) {
+            janusGraphGenericDao.commit();
+        }
+        ArtifactData artifactData = status.left().value();
+        ArtifactDefinition artifactDefResult = convertArtifactDataToArtifactDefinition(artifactData);
+        log.debug(THE_RETURNED_ARTIFACT_DEFINTION_IS, artifactDefResult);
+        return artifactDefResult;
+    }
+
     public Either<ArtifactDefinition, StorageOperationStatus> addArifactToComponent(ArtifactDefinition artifactInfo, String parentId,
                                                                                     NodeTypeEnum type, boolean failIfExist, boolean inTransaction) {
         Either<ArtifactData, StorageOperationStatus> status = addArtifactToGraph(artifactInfo, parentId, type, failIfExist);
@@ -86,13 +96,7 @@ public class ArtifactOperation {
             log.debug("Failed to add artifact {} to {} {}", artifactInfo.getArtifactName(), type, parentId);
             return Either.right(status.right().value());
         } else {
-            if (!inTransaction) {
-                janusGraphGenericDao.commit();
-            }
-            ArtifactData artifactData = status.left().value();
-            ArtifactDefinition artifactDefResult = convertArtifactDataToArtifactDefinition(artifactData);
-            log.debug(THE_RETURNED_ARTIFACT_DEFINTION_IS, artifactDefResult);
-            return Either.left(artifactDefResult);
+            return Either.left(artifactDefResult(status, artifactInfo, inTransaction));
         }
     }
 
@@ -202,13 +206,7 @@ public class ArtifactOperation {
             BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("Update Artifact", artifactId, String.valueOf(status.right().value()));
             return Either.right(status.right().value());
         } else {
-            if (!inTransaction) {
-                janusGraphGenericDao.commit();
-            }
-            ArtifactData artifactData = status.left().value();
-            ArtifactDefinition artifactDefResult = convertArtifactDataToArtifactDefinition(artifactData);
-            log.debug(THE_RETURNED_ARTIFACT_DEFINTION_IS, artifactDefResult);
-            return Either.left(artifactDefResult);
+            return Either.left(artifactDefResult(status, artifactInfo, inTransaction));
         }
     }
 
@@ -223,13 +221,7 @@ public class ArtifactOperation {
             BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError("Delete Artifact", artifactId, String.valueOf(status.right().value()));
             return Either.right(status.right().value());
         } else {
-            if (!inTransaction) {
-                janusGraphGenericDao.commit();
-            }
-            ArtifactData artifactData = status.left().value();
-            ArtifactDefinition artifactDefResult = convertArtifactDataToArtifactDefinition(artifactData);
-            log.debug(THE_RETURNED_ARTIFACT_DEFINTION_IS, artifactDefResult);
-            return Either.left(artifactDefResult);
+            return Either.left(artifactDefResult(status, artifactInfo, inTransaction));
         }
     }
 
