@@ -45,14 +45,7 @@ public class GraphLockOperation implements IGraphLockOperation {
      */
     @Override
     public StorageOperationStatus lockComponent(String componentId, NodeTypeEnum nodeType) {
-        log.info("lock resource with id {}", componentId);
-        JanusGraphOperationStatus lockElementStatus = null;
-        try {
-            lockElementStatus = disable ? JanusGraphOperationStatus.OK : janusGraphGenericDao.lockElement(componentId, nodeType);
-        } catch (Exception e) {
-            lockElementStatus = JanusGraphOperationStatus.ALREADY_LOCKED;
-        }
-        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(lockElementStatus);
+        return lockComponentDefault(String componentId, NodeTypeEnum nodeType);
     }
 
     /*
@@ -74,14 +67,7 @@ public class GraphLockOperation implements IGraphLockOperation {
 
     @Override
     public StorageOperationStatus lockComponentByName(String name, NodeTypeEnum nodeType) {
-        log.info("lock resource with name {}", name);
-        JanusGraphOperationStatus lockElementStatus = null;
-        try {
-            lockElementStatus = disable ? JanusGraphOperationStatus.OK : janusGraphGenericDao.lockElement(name, nodeType);
-        } catch (Exception e) {
-            lockElementStatus = JanusGraphOperationStatus.ALREADY_LOCKED;
-        }
-        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(lockElementStatus);
+        return lockComponentDefault(String name, NodeTypeEnum nodeType);
     }
 
     @Override
@@ -89,5 +75,16 @@ public class GraphLockOperation implements IGraphLockOperation {
         log.info("Toggling disable locking from {} to {}", this.disable, disable);
         this.disable = disable;
         return this.disable;
+    }
+
+    private StorageOperationStatus lockComponentDefault(String componentIdName, NodeTypeEnum nodeType) {
+        log.info("lock resource with id/name {}", componentIdName);
+        JanusGraphOperationStatus lockElementStatus = null;
+        try {
+            lockElementStatus = disable ? JanusGraphOperationStatus.OK : janusGraphGenericDao.lockElement(componentIdName, nodeType);
+        } catch (Exception e) {
+            lockElementStatus = JanusGraphOperationStatus.ALREADY_LOCKED;
+        }
+        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(lockElementStatus);
     }
 }
