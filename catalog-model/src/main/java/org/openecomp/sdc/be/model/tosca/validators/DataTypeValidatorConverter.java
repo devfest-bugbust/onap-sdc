@@ -154,13 +154,7 @@ public class DataTypeValidatorConverter {
                                 }
                             }
                             String value = null;
-                            if (elementValue != null) {
-                                if (elementValue.isJsonPrimitive() && elementValue.getAsString().isEmpty()) {
-                                    value = "";
-                                } else {
-                                    value = elementValue.toString();
-                                }
-                            }
+                            elementValueTreatment(value, elementValue);
                             boolean isValid = validator.isValid(value, innerType, allDataTypes);
                             if (!isValid) {
                                 log.debug("Failed to validate the value {} from type {}", value, propertyType);
@@ -203,6 +197,16 @@ public class DataTypeValidatorConverter {
                         dataTypeDefinition.getName());
                     return falseResult;
                 }
+            }
+        }
+    }
+
+    private void elementValueTreatment(String value, JsonElement elementValue) {
+        if (elementValue != null) {
+            if (elementValue.isJsonPrimitive() && elementValue.getAsString().isEmpty()) {
+                value = "";
+            } else {
+                value = elementValue.toString();
             }
         }
     }
@@ -322,13 +326,7 @@ public class DataTypeValidatorConverter {
                                 }
                             }
                             String value = null;
-                            if (elementValue != null) {
-                                if (elementValue.isJsonPrimitive() && elementValue.getAsString().isEmpty()) {
-                                    value = "";
-                                } else {
-                                    value = elementValue.toString();
-                                }
-                            }
+                            elementValueTreatment(value, elementValue);
                             boolean isValid = validator.isValid(value, innerType, allDataTypes);
                             if (!isValid) {
                                 log.debug("Failed to validate the value {} from type {}", value, propertyType);

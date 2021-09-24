@@ -278,6 +278,14 @@ public class ModelConverter {
     }
 
     private static void convertInterfaces(TopologyTemplate toscaElement, Resource resource) {
+        convertInterfacesDefault(toscaElement, resource);
+    }
+
+    private static void convertServiceInterfaces(TopologyTemplate toscaElement, Service service) {
+        convertInterfacesDefault(toscaElement, resource);
+    }
+
+    private void convertInterfacesDefault(TopologyTemplate toscaElement, Resource resource) {
         Map<String, InterfaceDataDefinition> interfaces = toscaElement.getInterfaces();
         Map<String, InterfaceDefinition> copy;
         if (interfaces != null) {
@@ -286,17 +294,6 @@ public class ModelConverter {
             copy = new HashMap<>();
         }
         resource.setInterfaces(copy);
-    }
-
-    private static void convertServiceInterfaces(TopologyTemplate toscaElement, Service service) {
-        Map<String, InterfaceDataDefinition> interfaces = toscaElement.getInterfaces();
-        Map<String, InterfaceDefinition> copy;
-        if (interfaces != null) {
-            copy = interfaces.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new InterfaceDefinition(e.getValue())));
-        } else {
-            copy = new HashMap<>();
-        }
-        service.setInterfaces(copy);
     }
 
     private static void convertAttributesToResource(NodeType nodeType, Resource resource) {
