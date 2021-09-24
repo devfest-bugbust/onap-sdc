@@ -312,16 +312,7 @@ public class ComponentsUtils {
     }
 
     public ResponseFormat getResponseFormatByCapabilityType(ActionStatus actionStatus, CapabilityTypeDefinition capabilityType) {
-        if (capabilityType == null) {
-            return getResponseFormat(actionStatus);
-        }
-        ResponseFormat responseFormat;
-        if (actionStatus == ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST) {
-            responseFormat = getResponseFormat(ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST, capabilityType.getType());
-        } else {
-            responseFormat = getResponseFormat(actionStatus);
-        }
-        return responseFormat;
+        return getResponseFormatByDefaultType(actionStatus, capabilityType, ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST);
     }
 
     public <T> ResponseFormat getResponseFormatByElement(ActionStatus actionStatus, T obj) {
@@ -1392,16 +1383,7 @@ public class ComponentsUtils {
     }
 
     public ResponseFormat getResponseFormatByPolicyType(ActionStatus actionStatus, PolicyTypeDefinition policyType) {
-        if (policyType == null) {
-            return getResponseFormat(actionStatus);
-        }
-        ResponseFormat responseFormat;
-        if (actionStatus == ActionStatus.POLICY_TYPE_ALREADY_EXIST) {
-            responseFormat = getResponseFormat(actionStatus, policyType.getType());
-        } else {
-            responseFormat = getResponseFormat(actionStatus);
-        }
-        return responseFormat;
+        return getResponseFormatByDefaultType(actionStatus, policyType, ActionStatus.POLICY_TYPE_ALREADY_EXIST);
     }
 
     public ResponseFormat getResponseFormatByDataType(ActionStatus actionStatus, DataTypeDefinition dataType, List<String> properties) {
@@ -1564,4 +1546,16 @@ public class ComponentsUtils {
         return allDataTypes.left().value();
     }
 
+    private ResponseFormat getResponseFormatByDefaultType(ActionStatus actionStatus, CapabilityTypeDefinition defaultType, ActionStatus status) {
+        if (defaultType == null) {
+            return getResponseFormat(actionStatus);
+        }
+        ResponseFormat responseFormat;
+        if (actionStatus == status) {
+            responseFormat = getResponseFormat(status, defaultType.getType());
+        } else {
+            responseFormat = getResponseFormat(actionStatus);
+        }
+        return responseFormat;
+    }
 }
