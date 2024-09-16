@@ -62,6 +62,10 @@ public class PluginStatusBL {
         } catch (Exception e) {
             log.error("Could not initialize the Https client: {}", e.getMessage());
             log.debug("Exception:", e);
+        } finally {
+            if (this.client != null) {
+                this.client.close();
+            }
         }
     }
 
