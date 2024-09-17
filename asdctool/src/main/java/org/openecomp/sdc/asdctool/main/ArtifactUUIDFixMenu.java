@@ -40,15 +40,16 @@ public class ArtifactUUIDFixMenu {
             fixServices);
         String appConfigDir = args[0];
         ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ArtifactUUIDFixConfiguration.class);
-        ArtifactUuidFix artifactUuidFix = context.getBean(ArtifactUuidFix.class);
-        boolean isSuccessful = artifactUuidFix.doFix(fixServices, runMode);
-        if (isSuccessful) {
-            log.info("Fixing artifacts UUID for 1707  was finished successfully");
-        } else {
-            log.info("Fixing artifacts UUID for 1707  has failed");
-            System.exit(2);
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ArtifactUUIDFixConfiguration.class)) {
+            ArtifactUuidFix artifactUuidFix = context.getBean(ArtifactUuidFix.class);
+            boolean isSuccessful = artifactUuidFix.doFix(fixServices, runMode);
+            if (isSuccessful) {
+                log.info("Fixing artifacts UUID for 1707  was finished successfully");
+            } else {
+                log.info("Fixing artifacts UUID for 1707  has failed");
+                System.exit(2);
+            }
+            System.exit(0);
         }
-        System.exit(0);
     }
 }
